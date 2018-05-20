@@ -3,7 +3,7 @@ var $bodyInput = $('.body-input');
 var $saveButton = $('.save-button');
 // var searchInput = $('.search-input');
 
-var ideaList = [];
+var $ideaList = $([]);
 
 $titleInput.add($bodyInput).keyup(function() {
   if ($titleInput.val() !== '' && $bodyInput.val() !== '') {
@@ -34,7 +34,7 @@ function grabStorageData() {
 }
 
 function updateStorageData() {
-  var stringedIdeaList = JSON.stringify(ideaList);
+  var stringedIdeaList = JSON.stringify($ideaList);
   console.log(stringedIdeaList);
   localStorage.setItem('storedIdeaList', stringedIdeaList);
 }
