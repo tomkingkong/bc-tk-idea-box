@@ -38,3 +38,12 @@ function updateStorageData() {
   console.log(stringedIdeaList);
   localStorage.setItem('storedIdeaList', stringedIdeaList);
 }
+
+function Idea(title, body) {
+  this.title = title;
+  this.body = body;
+  this.quality = 'swill';
+  this.id = Date.now();
+}
+
+
