@@ -17,9 +17,15 @@ $titleInput.add($bodyInput).keyup(function() {
 
 $saveButton.on('click', function(event) {
   event.preventDefault();
+  console.log($titleInput.val() + $bodyInput.val())
+  $.fn.clearFields();
   
+  });
 
-});
-
+$.fn.clearFields = function() {
+  $titleInput.val('');
+  $bodyInput.val('');
+  $saveButton.prop('disabled', true);
+}
 
 
