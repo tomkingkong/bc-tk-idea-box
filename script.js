@@ -38,3 +38,7 @@ function updateStorageData() {
   console.log(stringedIdeaList);
   localStorage.setItem('storedIdeaList', stringedIdeaList);
 }
+
+function generateIdea() {
+  var idea = new Idea($titleInput.val(), $bodyInput.val());
+}
