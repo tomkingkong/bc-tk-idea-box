@@ -46,4 +46,6 @@ function Idea(title, body) {
   this.id = Date.now();
 }
 
-
+function makeNewIdeaAddToList() {
+  var idea = new Idea($titleInput.val(), $bodyInput.val());
+}
