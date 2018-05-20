@@ -9,6 +9,8 @@
   <link rel="stylesheet" type="text/css" href="reset.css">
   <link href="https://fonts.googleapis.com/css?family=Open+Sans|Roboto+Slab:700" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="turing/jQuery-Compressed/jquery-3.3.1.min.js"><\/script>')</script>
 </head>
 <body>
   <div class="container">
@@ -17,7 +19,7 @@
       <form>
         <input class="title-input" type="text" name="title" placeholder="Title" aria-label="input your idea title">
         <input class="body-input" type="text" name="body" placeholder="Body" aria-label="input your idea body text">
-        <button class="save-button" type="submit" aria-label="click hear to save">save</button>
+        <button class="save-button" type="submit" aria-label="click hear to save" disabled="disabled">save</button>
       </form>
     </main>
     <section aria-label="my idea list">
@@ -61,6 +63,7 @@
         </li>
       </ul>
     </section>
+    <script type="text/javascript" src="script.js"></script>
   </div>
 </body>
 </html>
