@@ -113,14 +113,14 @@ h2 {
   color: #6D6E71;
 }
 
-.image-delete {
+.delete-button {
   background: url(images/delete.svg) no-repeat;
   outline: 0;
   width: 1.5em;
   height: 1.5em;
 }
 
-.image-delete:hover {
+.delete-button:hover {
   background: url(images/delete-hover.svg) no-repeat;
 }
 
@@ -139,7 +139,7 @@ li footer {
   padding: 1em 0;
 }
 
-.image-upvote {
+.upvote-button {
   background: url(images/upvote.svg) no-repeat;
   margin: 0 .8em;
   outline: 0;
@@ -147,18 +147,18 @@ li footer {
   height: 1.5em;
 }
 
-.image-upvote:hover {
+.upvote-button:hover {
   background: url(images/upvote-hover.svg) no-repeat;
 }
 
-.image-downvote {
+.downvote-button {
   background: url(images/downvote.svg) no-repeat;
   outline: 0;
   width: 1.5em;
   height: 1.5em;
 }
 
-.image-downvote:hover {
+.downvote-button:hover {
   background: url(images/downvote-hover.svg) no-repeat;
 }
 
