@@ -78,19 +78,19 @@ function prependIdeaToList() {
   var ideaCard = '';
   $ideaList.forEach(function(obj) {
     ideaCard += 
-      `<li class="idea-card" data-id="${obj.id}">
+      `<li role="idea card" aria-selected="true" class="idea-card" data-id="${obj.id}">
         <header class="idea-head">
           <h2 class="idea-title" contenteditable="true">
           ${obj.title}
           </h2>
-          <button class="delete-button" alt="delete this idea"></button>
+          <button class="delete-button" aria-label="delete"></button>
         </header>
         <p class="idea-body" contenteditable="true" type="submit">
         ${obj.body}
         </p>
         <footer>
-          <button id="down" class="downvote-button" alt="downvote this idea"></button>
-          <button id="up" class="upvote-button" alt="upvote this idea"></button>
+          <button id="down" class="downvote-button" aria-label="downvote"></button>
+          <button id="up" class="upvote-button" aria-label="upvote"></button>
           <small>${obj.quality}</small>
         </footer>
       </li>`
@@ -261,7 +261,7 @@ function displaySearchResults(results) {
   var ideaCard = '';
   results.forEach(function(obj) {
     ideaCard += 
-      `<li class="idea-card" data-id="${obj.id}">
+      `<li class="idea-card" aria-selected="true" data-id="${obj.id}">
         <header class="idea-head">
           <h2 class="idea-title" contenteditable="true">
           ${obj.title}
