@@ -39,6 +39,7 @@ $pageUl.on('click', '.upvote-button', upVote);
 $pageUl.on('focusout', '.idea-body', changeBody);
 $pageUl.on('focusout', '.idea-title', changeTitle);
 
+
 //FUNCTIONS
 
 function Idea(title, body) {
@@ -265,17 +266,23 @@ function displaySearchResults(results) {
           <h2 class="idea-title" contenteditable="true">
           ${obj.title}
           </h2>
-          <button class="delete-button" alt="delete this idea"></button>
+          <button class="delete-button" aria-label="delete"></button>
         </header>
         <p class="idea-body" contenteditable="true" type="submit">
         ${obj.body}
         </p>
         <footer>
-          <button id="down" class="downvote-button" alt="downvote this idea"></button>
-          <button id="up" class="upvote-button" alt="upvote this idea"></button>
+          <button id="down" class="downvote-button" aria-label="downvote"></button>
+          <button id="up" class="upvote-button" aria-label="upvote"></button>
           <small>${obj.quality}</small>
         </footer>
       </li>`
   })
   return $pageUl.html(ideaCard);
 }
+
+// $($pageUl).keypress('.idea-body', function(event) {
+//   if (event.which == 13) {
+//     changeBody();
+//   }
+// });
