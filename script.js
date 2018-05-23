@@ -4,7 +4,18 @@ var $saveButton = $('.save-button');
 var $form = $('form');
 // var searchInput = $('.search-input');
 
-var $ideaList = $([]);
+var $ideaList = [];
+
+$(window).on('load', function() {
+  var stringedIdeaList = localStorage.getItem('list');
+  var parsedIdeaList = JSON.parse(stringedIdeaList);
+  if (parsedIdeaList !== null) {
+    $ideaList = parsedIdeaList;
+    $ideaList.forEach(prependIdeaToList);
+    console.log($ideaList)
+  } 
+
+})
 
 //TODO: fix disable button on backspacing text input!
 $titleInput.add($bodyInput).keyup(function () {
@@ -17,7 +28,6 @@ $titleInput.add($bodyInput).keyup(function () {
 
 $form.on('submit', function (event) {
   event.preventDefault();
-  grabStorageData();
   addNewIdeaToArray();
   prependIdeaToList();
   updateStorageData();
@@ -31,18 +41,14 @@ function clearFields() {
 }
 
 function grabStorageData() {
-  var stringedIdeaList = localStorage.getItem('storedIdeaList');
-  if (stringedIdeaList !== null) {
-    var parsedIdeaList = JSON.parse(stringedIdeaList);
-    return parsedIdeaList;
-  } else {
-    return
-  }
+  var stringedIdeaList = localStorage.getItem('list');
+  var parsedIdeaList = JSON.parse(stringedIdeaList);
+  return parsedIdeaList
 }
 
 function updateStorageData() {
   var stringedIdeaList = JSON.stringify($ideaList);
-  localStorage.setItem('storedIdeaList', stringedIdeaList);
+  localStorage.setItem('list', stringedIdeaList);
 }
 
 function Idea(title, body) {
@@ -59,19 +65,20 @@ function addNewIdeaToArray() {
 
 function prependIdeaToList() {
   var ideaCard = '';
-  $ideaList.map(function () {
-    ideaCard = `<li class="idea-card">
+  for (var i = 0; i < $ideaList.length; i++) {
+    ideaCard += `<li class="idea-card">
     <header class="idea-head">
-      <h2>${this.title}</h2>
-      <button id="${this.id}" class="image-delete" alt="delete this idea"></button>
+      <h2 contenteditable="true">${$ideaList[i].title}</h2>
+      <button data-id="${$ideaList[i].id}" class="image-delete" alt="delete this idea"></button>
     </header>
-    <p class="idea-body">${this.body}</p>
+    <p class="idea-body" contenteditable="true">${$ideaList[i].body}</p>
     <footer>
-      <button id="${this.id}"class="image-downvote" alt="downvote this idea"></button>
-      <button id="${this.id}" class="image-upvote" alt="upvote this idea"></button>
-      <small>${this.quality}</small>
+      <button data-id="${$ideaList[i].id}"class="image-downvote" alt="downvote this idea"></button>
+      <button data-id="${$ideaList[i].id}" class="image-upvote" alt="upvote this idea"></button>
+      <small>${$ideaList[i].quality}</small>
     </footer>
   </li>`;
-  });
-  $('ul').prepend(ideaCard);
+  };
+  $('ul').html(ideaCard);
 }
+
