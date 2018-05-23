@@ -36,6 +36,8 @@ $form.on('submit', submitToList);
 $pageUl.on('click', '.delete-button', filterOutIdea);
 $pageUl.on('click', '.downvote-button', downVote);
 $pageUl.on('click', '.upvote-button', upVote);
+$pageUl.on('focusout', '.idea-body', changeBody);
+$pageUl.on('focusout', '.idea-title', changeTitle);
 
 //FUNCTIONS
 
@@ -77,12 +79,12 @@ function prependIdeaToList() {
     ideaCard += 
       `<li class="idea-card" data-id="${obj.id}">
         <header class="idea-head">
-          <h2 contenteditable="true">
+          <h2 class="idea-title" contenteditable="true">
           ${obj.title}
           </h2>
           <button class="delete-button" alt="delete this idea"></button>
         </header>
-        <p class="idea-body" contenteditable="true">
+        <p class="idea-body" contenteditable="true" type="submit">
         ${obj.body}
         </p>
         <footer>
@@ -185,6 +187,74 @@ function downVote() {
 function clearIdeas() {
   $('li').remove();
 }
+
+
+function changeBody() {
+  var currentIdeaID = $(this).closest('li').attr('data-id');
+  var newBody = $(this).closest('p').text();
+  var idea = $ideaList.find(function(obj){
+    if (obj.id == currentIdeaID){
+      return obj;
+    }
+  })
+  var updatedList = $ideaList.map(function(obj) {
+    if (obj.id === idea.id) {
+      obj.body = newBody;
+      console.log(obj)
+    }
+    return obj;
+  })
+  $ideaList = updatedList;
+  updateStorageData();
+  clearIdeas();
+  prependIdeaToList();
+}
+
+function changeTitle() {
+  var currentIdeaID = $(this).closest('li').attr('data-id');
+  var newTitle = $(this).closest('h2').text();
+  var idea = $ideaList.find(function(obj){
+    if (obj.id == currentIdeaID){
+      return obj;
+    }
+  })
+  var updatedList = $ideaList.map(function(obj) {
+    if (obj.id === idea.id) {
+      obj.title = newTitle;
+      console.log(obj)
+    }
+    return obj;
+  })
+  $ideaList = updatedList;
+  updateStorageData();
+  clearIdeas();
+  prependIdeaToList();
+}
+
+//CHANGE BOTH TITLE AND BODY // Create IF/Else //TODO:
+function changeBodyTitle() {
+  var currentIdeaID = $(this).closest('li').attr('data-id');
+  var newBody = $(this).closest('p').text();
+  var newTitle = $(this).closest('h2').text();
+  var idea = $ideaList.find(function(obj){
+    if (obj.id == currentIdeaID){
+      return obj;
+    }
+  })
+  var updatedList = $ideaList.map(function(obj) {
+    if (obj.id === idea.id) {
+      obj.body = newBody;
+      obj.title = newTitle;
+      console.log(obj)
+    }
+    return obj;
+  })
+  $ideaList = updatedList;
+  updateStorageData();
+  clearIdeas();
+  prependIdeaToList();
+}
+
 
 //SEARCH
 $('section').on('change keyup', '.search-input', function() {
