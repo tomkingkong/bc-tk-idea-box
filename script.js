@@ -6,7 +6,7 @@ var $form = $('form');
 var $titleInput = $('.title-input');
 var $bodyInput = $('.body-input');
 var $saveButton = $('.save-button');
-var searchInput = $('.search-input');
+var $searchInput = $('.search-input');
 var $deleteButton = $('.delete-button');
 var $upVoteButton = $('.upvote-button');
 var $downVoteButton = $('.downvote-button');
@@ -106,6 +106,7 @@ function submitToList(event) {
   clearFields();
 }
 
+//TODO: Turn filter into single function, to reuse
 function filterOutIdea() {
   var currentIdeaId = $(this).closest('li').attr('data-id');
   var updatedList = $ideaList.filter(function(obj) {
@@ -116,21 +117,9 @@ function filterOutIdea() {
     updateStorageData();
 }
 
+//Make up/down vote buttons with one function TODO::
 //If button clicked is downvote && quality !== swill do this
 //if button click is upvote && quality !== brilliant do this
-// $pageUl.on('click', '.downvote-button, .upvote-button', function(event) {
-//   var currentIdeaID = $(this).closest('li').attr('data-id');
-//   var idea = $ideaList.find(function(obj){
-//     return obj.id == currentIdeaID;
-//   });
-// console.log($(event))
-// if (idea.quality !== 'quality: swill' && $(event.target).closest('button').hasClass($downVoteButton)) {
-// console.log('shit is swill');
-// } else if (idea.quality === 'quality: swill' && $(event.target).id('up')) {
-// console.log('shit bout to be brilliant');
-// }
-// });
-
 
 function upVote() {
   var currentIdeaID = $(this).closest('li').attr('data-id');
@@ -183,11 +172,6 @@ function downVote() {
   clearIdeas();
   prependIdeaToList();
 }
-
-function clearIdeas() {
-  $('li').remove();
-}
-
 
 function changeBody() {
   var currentIdeaID = $(this).closest('li').attr('data-id');
@@ -255,8 +239,53 @@ function changeBodyTitle() {
   prependIdeaToList();
 }
 
+function clearIdeas() {
+  $('li').remove();
+}
 
 //SEARCH
-$('section').on('change keyup', '.search-input', function() {
-  console.log('search changed');
-})
+// $('section').on('change keyup', '.search-input', function() {
+//   var search = $searchInput.val();
+//   var searchParam = new RegExp( $searchInput, 'g' );
+
+//   var str = obj.title && obj.body
+//   var matchedSearch = str.match(searchParam)
+
+// })
+
+
+$('section').on('change keyup', '.search-input', matchFunction);
+
+function matchFunction() {
+  var str = $searchInput.val(); //from input
+  var regexp = new RegExp(str, 'ig'); //item to search in string, capitol or lowercase, all of the string
+  storageList = grabStorageData();
+  var results = storageList.filter(obj => obj.title.match(regexp));
+  clearIdeas();
+  searchResults(results);
+console.log(searchResults);
+}
+
+function searchResults(results) {
+  var ideaCard = '';
+  results.forEach(function(obj) {
+    ideaCard += 
+      `<li class="idea-card" data-id="${obj.id}">
+        <header class="idea-head">
+          <h2 class="idea-title" contenteditable="true">
+          ${obj.title}
+          </h2>
+          <button class="delete-button" alt="delete this idea"></button>
+        </header>
+        <p class="idea-body" contenteditable="true" type="submit">
+        ${obj.body}
+        </p>
+        <footer>
+          <button id="down" class="downvote-button" alt="downvote this idea"></button>
+          <button id="up" class="upvote-button" alt="upvote this idea"></button>
+          <small>${obj.quality}</small>
+        </footer>
+      </li>`
+  })
+  return $pageUl.html(ideaCard);
+}
