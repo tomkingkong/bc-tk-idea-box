@@ -184,7 +184,6 @@ function changeBody() {
   var updatedList = $ideaList.map(function(obj) {
     if (obj.id === idea.id) {
       obj.body = newBody;
-      console.log(obj)
     }
     return obj;
   })
@@ -229,7 +228,6 @@ function changeBodyTitle() {
     if (obj.id === idea.id) {
       obj.body = newBody;
       obj.title = newTitle;
-      console.log(obj)
     }
     return obj;
   })
@@ -243,30 +241,22 @@ function clearIdeas() {
   $('li').remove();
 }
 
-//SEARCH
-// $('section').on('change keyup', '.search-input', function() {
-//   var search = $searchInput.val();
-//   var searchParam = new RegExp( $searchInput, 'g' );
-
-//   var str = obj.title && obj.body
-//   var matchedSearch = str.match(searchParam)
-
-// })
-
-
 $('section').on('change keyup', '.search-input', matchFunction);
 
 function matchFunction() {
   var str = $searchInput.val(); //from input
   var regexp = new RegExp(str, 'ig'); //item to search in string, capitol or lowercase, all of the string
   storageList = grabStorageData();
-  var results = storageList.filter(obj => obj.title.match(regexp));
+  var titleResults = storageList.filter(obj => obj.title.match(regexp));
+  var bodyResults = storageList.filter(obj => obj.body.match(regexp));
+  var $mergedArray = $.merge(titleResults, bodyResults);
+  var $results = jQuery.uniqueSort($mergedArray);
   clearIdeas();
-  searchResults(results);
-console.log(searchResults);
+  displaySearchResults($results);
 }
 
-function searchResults(results) {
+//make universal?
+function displaySearchResults(results) {
   var ideaCard = '';
   results.forEach(function(obj) {
     ideaCard += 
