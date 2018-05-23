@@ -34,6 +34,8 @@ $titleInput.add($bodyInput).keyup(function () {
 
 $form.on('submit', submitToList);
 $pageUl.on('click', '.delete-button', filterOutIdea);
+$pageUl.on('click', '.downvote-button', downVote);
+$pageUl.on('click', '.upvote-button', upVote);
 
 //FUNCTIONS
 
@@ -71,25 +73,25 @@ function addNewIdeaToArray() {
 
 function prependIdeaToList() {
   var ideaCard = '';
-  for (var i = 0; i < $ideaList.length; i++) {
+  $ideaList.forEach(function(obj) {
     ideaCard += 
-      `<li class="idea-card" data-id="${$ideaList[i].id}">
+      `<li class="idea-card" data-id="${obj.id}">
         <header class="idea-head">
           <h2 contenteditable="true">
-          ${$ideaList[i].title}
+          ${obj.title}
           </h2>
           <button class="delete-button" alt="delete this idea"></button>
         </header>
         <p class="idea-body" contenteditable="true">
-        ${$ideaList[i].body}
+        ${obj.body}
         </p>
         <footer>
-          <button class="downvote-button" alt="downvote this idea"></button>
-          <button class="upvote-button" alt="upvote this idea"></button>
-          <small>${$ideaList[i].quality}</small>
+          <button id="down" class="downvote-button" alt="downvote this idea"></button>
+          <button id="up" class="upvote-button" alt="upvote this idea"></button>
+          <small>${obj.quality}</small>
         </footer>
       </li>`
-  }
+  })
   return $pageUl.html(ideaCard);
 }
 
@@ -103,25 +105,88 @@ function submitToList(event) {
 }
 
 function filterOutIdea() {
-  var currentIdea = $(this).closest('li').attr('data-id');
+  var currentIdeaId = $(this).closest('li').attr('data-id');
   var updatedList = $ideaList.filter(function(obj) {
-    return obj.id != currentIdea;
+    return obj.id != currentIdeaId;
   });
     $ideaList = updatedList;
     $(this).closest('li').remove();
     updateStorageData();
 }
 
-$pageUl.on('click', '.upvote-button', function() {
-  console.log($(this).closest('li').attr('data-id'));
-  console.log('upvote clicked');
-})
+//If button clicked is downvote && quality !== swill do this
+//if button click is upvote && quality !== brilliant do this
+// $pageUl.on('click', '.downvote-button, .upvote-button', function(event) {
+//   var currentIdeaID = $(this).closest('li').attr('data-id');
+//   var idea = $ideaList.find(function(obj){
+//     return obj.id == currentIdeaID;
+//   });
+// console.log($(event))
+// if (idea.quality !== 'quality: swill' && $(event.target).closest('button').hasClass($downVoteButton)) {
+// console.log('shit is swill');
+// } else if (idea.quality === 'quality: swill' && $(event.target).id('up')) {
+// console.log('shit bout to be brilliant');
+// }
+// });
 
-$pageUl.on('click', '.downvote-button', function() {
-  console.log($(this).closest('li').attr('data-id'));
-  console.log('downvote clicked');
-})
 
+function upVote() {
+  var currentIdeaID = $(this).closest('li').attr('data-id');
+  $ideaList = grabStorageData();
+  var idea = $ideaList.find(function(obj){
+    return obj.id == currentIdeaID;
+  })
+    if (idea.quality === 'quality: brilliant') {
+    return false;
+  } else if (idea.quality === 'quality: plausible') {
+    idea.quality = 'quality: brilliant';
+  } else if (idea.quality === 'quality: swill'){
+    idea.quality = 'quality: plausible';
+  }
+  var updatedList = $ideaList.map(function(obj) {
+    if (obj.id === idea.id) {
+      obj.quality = idea.quality;
+    }
+    return obj;
+  })
+  $ideaList = updatedList;
+  updateStorageData();
+  clearIdeas();
+  prependIdeaToList();
+}
+
+function downVote() {
+  var currentIdeaID = $(this).closest('li').attr('data-id');
+  $ideaList = grabStorageData();
+  var idea = $ideaList.find(function(obj){
+    if (obj.id == currentIdeaID){
+      return obj;
+    }
+  })
+    if (idea.quality === 'quality: swill') {
+    return false;
+  } else if (idea.quality === 'quality: brilliant') {
+    idea.quality = 'quality: plausible';
+  } else if (idea.quality === 'quality: plausible'){
+    idea.quality = 'quality: swill';
+  }
+  var updatedList = $ideaList.map(function(obj) {
+    if (obj.id === idea.id) {
+      obj.quality = idea.quality;
+    }
+    return obj;
+  })
+  $ideaList = updatedList;
+  updateStorageData();
+  clearIdeas();
+  prependIdeaToList();
+}
+
+function clearIdeas() {
+  $('li').remove();
+}
+
+//SEARCH
 $('section').on('change keyup', '.search-input', function() {
   console.log('search changed');
 })
