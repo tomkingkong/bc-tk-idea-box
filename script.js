@@ -29,8 +29,8 @@ $titleInput.add($bodyInput).keyup(function () {
 $form.on('submit', function (event) {
   event.preventDefault();
   addNewIdeaToArray();
-  prependIdeaToList();
   updateStorageData();
+  prependIdeaToList();
   clearFields();
 });
 
@@ -60,7 +60,7 @@ function Idea(title, body) {
 
 function addNewIdeaToArray() {
   var idea = new Idea($titleInput.val(), $bodyInput.val());
-  $ideaList.push(idea);
+  $ideaList.unshift(idea);
 }
 
 function prependIdeaToList() {
@@ -77,8 +77,9 @@ function prependIdeaToList() {
       <button data-id="${$ideaList[i].id}" class="image-upvote" alt="upvote this idea"></button>
       <small>${$ideaList[i].quality}</small>
     </footer>
-  </li>`;
-  };
-  $('ul').html(ideaCard);
+  </li>`
+  }
+  return $('ul').html(ideaCard);
+
 }
 
