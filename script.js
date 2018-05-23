@@ -1,4 +1,5 @@
-//Variables
+
+//#region--------------VARIABLES---------------------- //
 
 var $ideaList = [];
 var $pageUl = $('ul');
@@ -10,8 +11,9 @@ var $searchInput = $('.search-input');
 var $deleteButton = $('.delete-button');
 var $upVoteButton = $('.upvote-button');
 var $downVoteButton = $('.downvote-button');
+//#endregion ------------------------------------------//
 
-//Listeners
+//#region--------------LISTENERS---------------------- //
 
 //TODO: CHANGE FUNCTION TO SIMPLIFY LISTENER
 $(window).on('load', function() {
@@ -19,11 +21,12 @@ $(window).on('load', function() {
   var parsedIdeaList = JSON.parse(stringedIdeaList);
   if (parsedIdeaList !== null) {
     $ideaList = parsedIdeaList;
-    $ideaList.forEach(prependIdeaToList);
+    $ideaList.forEach(prependIdeasToList);
   } 
 })
 
-//TODO: fix disable button on backspacing text input! CHANGE FUNCTION
+//TODO: FIX  - disable save button, after backspacing to empty string!
+//Convert to simple function!
 $titleInput.add($bodyInput).keyup(function () {
   if ($titleInput.val() !== '' && $bodyInput.val() !== '') {
     $saveButton.prop('disabled', false);
@@ -36,11 +39,30 @@ $form.on('submit', submitToList);
 $pageUl.on('click', '.delete-button', filterOutIdea);
 $pageUl.on('click', '.downvote-button', downVote);
 $pageUl.on('click', '.upvote-button', upVote);
-$pageUl.on('focusout', '.idea-body', changeBody);
-$pageUl.on('focusout', '.idea-title', changeTitle);
+//TODO: Refactor Event Listeners for changing title and body
+$pageUl.on('focusout', '.idea-body', function(event){
+  event.preventDefault();
+     changeBody(event);
+ });
+$pageUl.on('keyup', '.idea-body', function(event){
+ event.preventDefault();
+  if (event.which === 13) {
+    changeBody(event);
+  }
+});
+$pageUl.on('focusout', '.idea-title', function(event){
+  event.preventDefault();
+     changeTitle(event);
+ });
+$pageUl.on('keyup', '.idea-title', function(event){
+ event.preventDefault();
+  if (event.which === 13) {
+    changeTitle(event);
+  }
+});
+//#endregion ------------------------------------------//
 
-
-//FUNCTIONS
+//#region--------------FUNCTIONS---------------------- //
 
 function Idea(title, body) {
   this.title = title;
@@ -74,7 +96,7 @@ function addNewIdeaToArray() {
   $ideaList.unshift(idea);
 }
 
-function prependIdeaToList() {
+function prependIdeasToList() {
   var ideaCard = '';
   $ideaList.forEach(function(obj) {
     ideaCard += 
@@ -103,11 +125,12 @@ function submitToList(event) {
   $ideaList = grabStorageData();
   addNewIdeaToArray();
   updateStorageData();
-  prependIdeaToList();
+  prependIdeasToList();
   clearFields();
 }
 
-//TODO: Turn filter into single function, to reuse
+//TODO: Turn part of this filter function into single function for reuse!
+//first 4 or 5 lines!
 function filterOutIdea() {
   var currentIdeaId = $(this).closest('li').attr('data-id');
   var updatedList = $ideaList.filter(function(obj) {
@@ -118,7 +141,7 @@ function filterOutIdea() {
     updateStorageData();
 }
 
-//Make up/down vote buttons with one function TODO::
+//TODO:: Make up/down vote buttons with one function 
 //If button clicked is downvote && quality !== swill do this
 //if button click is upvote && quality !== brilliant do this
 
@@ -144,7 +167,7 @@ function upVote() {
   $ideaList = updatedList;
   updateStorageData();
   clearIdeas();
-  prependIdeaToList();
+  prependIdeasToList();
 }
 
 function downVote() {
@@ -171,12 +194,13 @@ function downVote() {
   $ideaList = updatedList;
   updateStorageData();
   clearIdeas();
-  prependIdeaToList();
+  prependIdeasToList();
 }
 
-function changeBody() {
-  var currentIdeaID = $(this).closest('li').attr('data-id');
-  var newBody = $(this).closest('p').text();
+
+function changeBody(event) {
+  var currentIdeaID = $(event.currentTarget).closest('li').attr('data-id');
+  var newBody = $(event.currentTarget).closest('p').text(); 
   var idea = $ideaList.find(function(obj){
     if (obj.id == currentIdeaID){
       return obj;
@@ -191,12 +215,13 @@ function changeBody() {
   $ideaList = updatedList;
   updateStorageData();
   clearIdeas();
-  prependIdeaToList();
+  prependIdeasToList();
+  return
 }
 
-function changeTitle() {
-  var currentIdeaID = $(this).closest('li').attr('data-id');
-  var newTitle = $(this).closest('h2').text();
+function changeTitle(event) {
+  var currentIdeaID = $(event.currentTarget).closest('li').attr('data-id');
+  var newTitle = $(event.currentTarget).closest('h2').text();
   var idea = $ideaList.find(function(obj){
     if (obj.id == currentIdeaID){
       return obj;
@@ -212,7 +237,7 @@ function changeTitle() {
   $ideaList = updatedList;
   updateStorageData();
   clearIdeas();
-  prependIdeaToList();
+  prependIdeasToList();
 }
 
 //CHANGE BOTH TITLE AND BODY // Create IF/Else //TODO:
@@ -235,7 +260,7 @@ function changeBodyTitle() {
   $ideaList = updatedList;
   updateStorageData();
   clearIdeas();
-  prependIdeaToList();
+  prependIdeasToList();
 }
 
 function clearIdeas() {
@@ -281,8 +306,4 @@ function displaySearchResults(results) {
   return $pageUl.html(ideaCard);
 }
 
-// $($pageUl).keypress('.idea-body', function(event) {
-//   if (event.which == 13) {
-//     changeBody();
-//   }
-// });
+//endregion------------------------------------------------ //
