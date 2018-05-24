@@ -248,7 +248,7 @@ function changeTitle(event) {
   prependIdeasToList();
 }
 
-//TODO:CHANGE BOTH TITLE AND BODY // Create IF/Else
+//TODO: CHANGE BOTH TITLE AND BODY // Create IF/Else
 function changeBodyTitle() {
   var currentIdeaID = $(this).closest('li').attr('data-id');
   var newBody = $(this).closest('p').text();
@@ -283,7 +283,7 @@ function matchFunction() {
   displaySearchResults($results);//restore filtered list of ideas to DOM
 }
 
-//Make this function universal, it is nearly identical to prependIdeasToList
+//TODO: Make this function universal, it is nearly identical to prependIdeasToList
 function displaySearchResults(results) {
   var ideaCard = '';
   results.forEach(function(obj) {

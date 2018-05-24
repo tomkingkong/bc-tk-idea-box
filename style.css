@@ -106,6 +106,9 @@ h2 {
   font-family: "Roboto Slab", serif;
   font-size: 1.4em;
   color: #6D6E71;
+  overflow: scroll;
+  max-height: 2em;
+  max-width: 20em;
 }
 
 .delete-button {
