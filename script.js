@@ -11,31 +11,16 @@ var $searchInput = $('.search-input');
 var $deleteButton = $('.delete-button');
 var $upVoteButton = $('.upvote-button');
 var $downVoteButton = $('.downvote-button');
+
 //#endregion ------------------------------------------//
 
 //#region--------------LISTENERS---------------------- //
 
-//TODO: CHANGE FUNCTION TO SIMPLIFY LISTENER
-$(window).on('load', function() {
-  var stringedIdeaList = localStorage.getItem('list');
-  var parsedIdeaList = JSON.parse(stringedIdeaList);
-  if (parsedIdeaList !== null) {
-    $ideaList = parsedIdeaList;
-    $ideaList.forEach(prependIdeasToList);
-  } 
-})
-
-//TODO: FIX  - disable save button, after backspacing to empty string!
-//Convert to simple function!
-$titleInput.add($bodyInput).keyup(function () {
-  if ($titleInput.val() !== '' && $bodyInput.val() !== '') {
-    $saveButton.prop('disabled', false);
-  } else {
-    return false;
-  }
-});
-
+$(window).on('load', repopulatePage);
 $form.on('submit', submitToList);
+$titleInput.add($bodyInput).keyup(toggleEnableSaveButton);
+$pageUl.on('click', '.idea-title', makeContentEditable);
+$('section').on('change keyup', '.search-input', matchFunction);
 $pageUl.on('click', '.delete-button', filterOutIdea);
 $pageUl.on('click', '.downvote-button', downVote);
 $pageUl.on('click', '.upvote-button', upVote);
@@ -60,21 +45,48 @@ $pageUl.on('keyup', '.idea-title', function(event){
     changeTitle(event);
   }
 });
+
+
 //#endregion ------------------------------------------//
 
 //#region--------------FUNCTIONS---------------------- //
 
-function Idea(title, body) {
-  this.title = title;
-  this.body = body;
-  this.quality = 'quality: swill';
-  this.id = Date.now();
+function repopulatePage() {
+  var stringedIdeaList = localStorage.getItem('list');
+  var parsedIdeaList = JSON.parse(stringedIdeaList);
+  if (parsedIdeaList !== null) {
+    $ideaList = parsedIdeaList;
+    $ideaList.forEach(prependIdeasToList);
+  } 
+}
+
+function toggleEnableSaveButton() {
+  if ($titleInput.val() !== '' && $bodyInput.val() !== '') {
+    $saveButton.prop('disabled', false);
+  } else if ($titleInput.val() == '' || $bodyInput.val() == ''){
+    $saveButton.prop('disabled', true);
+  } else {
+    return false;
+  }
+}
+
+function submitToList(event) {
+  event.preventDefault();
+  $ideaList = grabStorageData();
+  addNewIdeaToArray();
+  updateStorageData();
+  prependIdeasToList();
+  clearFields();
 }
 
 function clearFields() {
   $titleInput.val('');
   $bodyInput.val('');
   $saveButton.prop('disabled', true);
+}
+
+function clearIdeas() {
+  $('li').remove();
 }
 
 function grabStorageData() {
@@ -91,6 +103,13 @@ function updateStorageData() {
   localStorage.setItem('list', stringedIdeaList);
 }
 
+function Idea(title, body) {
+  this.title = title;
+  this.body = body;
+  this.quality = 'quality: swill';
+  this.id = Date.now();
+}
+
 function addNewIdeaToArray() {
   var idea = new Idea($titleInput.val(), $bodyInput.val());
   $ideaList.unshift(idea);
@@ -102,12 +121,12 @@ function prependIdeasToList() {
     ideaCard += 
       `<li role="idea card" aria-selected="true" class="idea-card" data-id="${obj.id}">
         <header class="idea-head">
-          <h2 class="idea-title" contenteditable="true">
+          <h2 class="idea-title" tabindex="1" contenteditable="false" aria-label="enter to edit content">
           ${obj.title}
           </h2>
           <button class="delete-button" aria-label="delete"></button>
         </header>
-        <p class="idea-body" contenteditable="true" type="submit">
+        <p class="idea-body" tabindex="0" contenteditable="true" type="submit">
         ${obj.body}
         </p>
         <footer>
@@ -118,15 +137,6 @@ function prependIdeasToList() {
       </li>`
   })
   return $pageUl.html(ideaCard);
-}
-
-function submitToList(event) {
-  event.preventDefault();
-  $ideaList = grabStorageData();
-  addNewIdeaToArray();
-  updateStorageData();
-  prependIdeasToList();
-  clearFields();
 }
 
 //TODO: Turn part of this filter function into single function for reuse!
@@ -144,7 +154,6 @@ function filterOutIdea() {
 //TODO:: Make up/down vote buttons with one function 
 //If button clicked is downvote && quality !== swill do this
 //if button click is upvote && quality !== brilliant do this
-
 function upVote() {
   var currentIdeaID = $(this).closest('li').attr('data-id');
   $ideaList = grabStorageData();
@@ -197,7 +206,6 @@ function downVote() {
   prependIdeasToList();
 }
 
-
 function changeBody(event) {
   var currentIdeaID = $(event.currentTarget).closest('li').attr('data-id');
   var newBody = $(event.currentTarget).closest('p').text(); 
@@ -240,7 +248,7 @@ function changeTitle(event) {
   prependIdeasToList();
 }
 
-//CHANGE BOTH TITLE AND BODY // Create IF/Else //TODO:
+//TODO:CHANGE BOTH TITLE AND BODY // Create IF/Else
 function changeBodyTitle() {
   var currentIdeaID = $(this).closest('li').attr('data-id');
   var newBody = $(this).closest('p').text();
@@ -263,37 +271,31 @@ function changeBodyTitle() {
   prependIdeasToList();
 }
 
-function clearIdeas() {
-  $('li').remove();
-}
-
-$('section').on('change keyup', '.search-input', matchFunction);
-
 function matchFunction() {
-  var str = $searchInput.val(); //from input
-  var regexp = new RegExp(str, 'ig'); //item to search in string, capitol or lowercase, all of the string
+  var str = $searchInput.val();
+  var regexp = new RegExp(str, 'ig'); //item to search in string, 'i' -capitol or lowercase, 'g' -all of the string
   storageList = grabStorageData();
-  var titleResults = storageList.filter(obj => obj.title.match(regexp));
-  var bodyResults = storageList.filter(obj => obj.body.match(regexp));
-  var $mergedArray = $.merge(titleResults, bodyResults);
-  var $results = jQuery.uniqueSort($mergedArray);
-  clearIdeas();
-  displaySearchResults($results);
+  var titleResults = storageList.filter(obj => obj.title.match(regexp));//match regex string to title, return filtered array
+  var bodyResults = storageList.filter(obj => obj.body.match(regexp));//match regex string to body, return filtered array
+  var $mergedArray = $.merge(titleResults, bodyResults);//merge both results
+  var $results = jQuery.uniqueSort($mergedArray);//remove duplicates and return single array
+  clearIdeas();//clear ideas from DOM
+  displaySearchResults($results);//restore filtered list of ideas to DOM
 }
 
-//make universal?
+//Make this function universal, it is nearly identical to prependIdeasToList
 function displaySearchResults(results) {
   var ideaCard = '';
   results.forEach(function(obj) {
     ideaCard += 
       `<li class="idea-card" aria-selected="true" data-id="${obj.id}">
         <header class="idea-head">
-          <h2 class="idea-title" contenteditable="true">
+          <h2 class="idea-title" tabindex="1" contenteditable="false" aria-label="click to edit content">
           ${obj.title}
           </h2>
           <button class="delete-button" aria-label="delete"></button>
         </header>
-        <p class="idea-body" contenteditable="true" type="submit">
+        <p class="idea-body" tabindex="0"  contenteditable="true" type="submit">
         ${obj.body}
         </p>
         <footer>
@@ -304,6 +306,12 @@ function displaySearchResults(results) {
       </li>`
   })
   return $pageUl.html(ideaCard);
+}
+
+//change click to enter
+function makeContentEditable() {
+  console.log('whoot');
+  $('.idea-title').prop('contenteditable', true);
 }
 
 //endregion------------------------------------------------ //
