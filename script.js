@@ -2,8 +2,7 @@
 //#region--------------VARIABLES---------------------- //
 
 var $ideaList = [];
-// var $pageUl = $('ul');
-var $pageUl = document.querySelector('ul');
+var $pageUl = $('ul');
 var $form = $('form');
 var $titleInput = $('.title-input');
 var $bodyInput = $('.body-input');
